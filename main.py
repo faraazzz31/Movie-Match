@@ -1,9 +1,3 @@
-import math
-
-print("Hello World")
-for i in range(0, 5):
-  print(i)
-  
 def cosine_similarity(m1: list[int], m2: list[int]) -> int:
   """Returns the cosine similarity value between two lists.
   
@@ -15,3 +9,8 @@ def cosine_similarity(m1: list[int], m2: list[int]) -> int:
   n2 = sum([m2[i] ** 2 for i in range(0, len(m2))]) ** 0.5
   
   return dot / (n1 * n2) 
+
+if __name__ == '__main__':
+  print("Hello World")
+  for i in range(0, 5):
+    print(i)
