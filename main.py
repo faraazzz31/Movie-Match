@@ -9,6 +9,9 @@ import pandas
 from typing import Optional
 
 #TODO: add pythonta and pytest
+#Christoffer: Graph class, RI, recommendations
+#Faraaz: create_graph, RI, UI
+#Razan: calculate_similarity, arrange_cosine_similarities
 
 movie_title_mapping = {} #mapping of movie title to Movie Vertex
 
@@ -97,7 +100,8 @@ def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
     1. We add all the movies to the graph (movies node)
     2. Access the users dataset
     3. If the user is not in the graph -> we add the users (user_id)
-    4. Add the edgge(user_id, movie_id, rating)
+    4. Add the edge(user_id, movie_id, rating)
+    5. update movie_title_mapping = {} #mapping of movie title to Movie Vertex
     """
     ...
 
