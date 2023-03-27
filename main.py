@@ -137,11 +137,13 @@ def compute_cosine_similarity(movie1: Movie, movie2: Movie, graph: RatingGraph) 
     """return None if only 1 or 0 user watched movie1 and movie2"""
     ...
 
-def arrange_cosine_similarities() -> list[tuple[float, str]]:
-    """ return list of tuple in the form (cosine similarity, movie title)
+def arrange_cosine_similarities(movie: Movie, graph: RatingGraph) -> list[tuple[float, str]]:
+    """
+    Using the movie and the graph, return list of tuple in the form (cosine similarity, movie title)
     Arrange all the cosine similarities.
-    If cosine similarity is none do not add to the tuple."""
-    # graph = create_graph()
+
+    If cosine similarity is none do not add to the tuple.
+    """
     ...
 
 def recommendations(watched_movies: list[str]) -> list[str]:
