@@ -85,7 +85,7 @@ class RatingGraph:
         self._users = {}
         self._movies = {}
 
-        def add_users(self, user_id: int) -> None:
+    def add_users(self, user_id: int) -> None:
         """Add a new user with the given id to this graph.
 
         If the user has already been in the graph, do not add the user.
