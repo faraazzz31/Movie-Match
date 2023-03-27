@@ -14,6 +14,7 @@ from typing import Optional
 #Razan: calculate_similarity, arrange_cosine_similarities
 
 movie_title_mapping = {} #mapping of movie title to Movie Vertex
+movie_title_name_list = []
 
 class User:
     """
@@ -35,6 +36,7 @@ class User:
 
     def __init__(self, user_id: int):
         self.user_id = user_id
+        self.movies = {}
 
 
 class Movie:
@@ -58,9 +60,10 @@ class Movie:
     users: dict[User, float]
     title: str
 
-    def __init__(self, user_id: int, title: str):
-        self.user_id = user_id
+    def __init__(self, movie_id: int, title: str):
+        self.movie_id = movie_id
         self.title = title
+        self.users = {}
 
 class RatingGraph:
     """
@@ -136,7 +139,20 @@ def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
     4. Add the edge(user_id, movie_id, rating)
     5. update movie_title_mapping = {} #mapping of movie title to Movie Vertex
     """
-    ...
+    graph = RatingGraph()
+    movie_file = pandas.read_csv(csv_file_movie)
+    user_file = pandas.read_csv(csv_file_user)
+
+    for i in movie_file.index:
+        graph.add_movies(int(movie_file["movieId"][i]), str(movie_file["title"][i]))
+        movie_title_mapping[str(movie_file["title"][i])] = graph.get_movie(int(movie_file["movieId"][i]))
+        movie_title_name_list.append(str(movie_file["title"][i]))
+
+    for j in user_file.index:
+        graph.add_users(int(user_file["userId"][j]))
+        graph.add_edge(int(user_file["userId"][j]), int(user_file["movieId"][j]), float(user_file["rating"][j]))
+
+    return graph
 
 def compute_cosine_similarity(movie1: Movie, movie2: Movie, graph: RatingGraph) -> Optional[float]:
     """return None if only 1 or 0 user watched movie1 and movie2"""
