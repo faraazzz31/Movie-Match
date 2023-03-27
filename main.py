@@ -62,18 +62,15 @@ class Movie:
         self.user_id = user_id
         self.title = title
 
-
 class RatingGraph:
     """
     A class for a recommender system that acts like a graph where users are linked to movies with
     edges having the rating.
-
     Private Instance Attributes:
         -_users:
             A mapping of users where the keys are the user_id and the values are the corresponding User Vertex.
         -_movies:
             A mapping of movies where the keys are the movie_id and the values are the corresponding Movie Vertex.
-
     Representation Invariants:
     ...
     """
@@ -81,7 +78,7 @@ class RatingGraph:
     _movies: dict[int, Movie]
 
     def __init__(self):
-        """initialize an empty RatingGraph"""
+        """Initialize an empty RatingGraph"""
         self._users = {}
         self._movies = {}
 
@@ -116,12 +113,20 @@ class RatingGraph:
         """
         if not (user_id in self._users and movie_id in self._movies):
             raise ValueError
-        
+
         user = self._users[user_id]
         movie = self._movies[movie_id]
-        
+
         user.movies[movie] = rating
         movie.users[user] = rating
+
+    def get_movie(self, movie_id) -> Movie:
+        """Based on the movie_id, return the movie node.
+
+        Preconditions:
+        - movie_id in self._movies
+        """
+        return self._movies[movie_id]
 
 def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
     """
