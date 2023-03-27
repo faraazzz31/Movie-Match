@@ -145,4 +145,42 @@ def arrange_cosine_similarities() -> list[tuple[float, str]]:
     ...
 
 def recommendations(watched_movies: list[str]) -> list[str]:
-    ...
+    """Give five movies recommendation based on the given three watched_movies using cosine similarity.
+
+    Based on the pre-computed cosine similarity, the recommender system will recommend movies according these following
+    steps:
+    1. For each watched_movies take the 5 most similar movies.
+    2. Choose 5 random movies from the pool of similar movies.
+    3. If there is at least one movie in the movies recommendation that has been watched by the user,
+    then take the next 5 most similar movies and return to step 2.
+
+    Should we use graph as the parameter?? and remove the movie_title_mapping dict
+
+
+    Preconditions:
+    - len(watched_movies) == 3
+    """
+    graph = create_graph("ratings.csv", "movies.csv")
+
+    similar_movies = []
+
+    i = 0
+    while True:
+        for watched_movie in watched_movies:
+            watched_movie_node = movie_title_mapping[watched_movie]
+            similar_movies.extend((arrange_cosine_similarities(watched_movie_node, graph))[i:(i + 5)])
+
+        chosen_movies = sample(similar_movies, 5)
+        if valid(chosen_movies, watched_movies):
+            return [movie[1] for movie in chosen_movies]
+
+        i += 5
+
+def valid(chosen_movies: list[tuple[float, str]], watched_movies: list[str]) -> bool:
+    """Return false if at least one of chosen_movies has been watched by the user"""
+
+    for rating, title in chosen_movies:
+        if title in watched_movies:
+            return False
+
+    return True
