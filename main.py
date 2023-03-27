@@ -8,7 +8,7 @@ import csv
 import pandas
 from typing import Optional
 
-#TODO: add pythonta and pytest
+#TODO: add pythonta and pytest, and rewrite the docstring and precondition
 #Christoffer: Graph class, RI, recommendations
 #Faraaz: create_graph, RI, UI
 #Razan: calculate_similarity, arrange_cosine_similarities
