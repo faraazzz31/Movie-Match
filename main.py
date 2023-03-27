@@ -27,7 +27,8 @@ class User:
         the ratings.
 
     Representation Invariants:
-    ...
+    - all(0.0 <= self.movies[movie] <= 5.0 for movie in self.movies)
+    - all(self in movie.users for movie in self.movies)
     """
     user_id: int
     movies: dict[Movie, float]
@@ -50,7 +51,8 @@ class Movie:
             The name of the movie.
 
         Representation Invariants:
-        ...
+        - all(0.0 <= self.users[user] <= 5.0 for user in self.users)
+        - all(self in user.movies for user in self.users)
         """
     movie_id: int
     users: dict[User, float]
