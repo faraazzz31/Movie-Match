@@ -85,17 +85,43 @@ class RatingGraph:
         self._users = {}
         self._movies = {}
 
-    def add_users(self, user_id: int) -> None:
-        ...
+        def add_users(self, user_id: int) -> None:
+        """Add a new user with the given id to this graph.
+
+        If the user has already been in the graph, do not add the user.
+        """
+        if user_id in self._users:
+            return
+
+        new_user = User(user_id)
+        self._users[user_id] = new_user
+
 
     def add_movies(self, movie_id: int, title: str) -> None:
-        ...
+        """Add a new movie with the given id and title to this graph.
+
+        If the movie has already been in the graph, do not add the movie.
+        """
+        if movie_id in self._movies:
+            return
+
+        new_movie = Movie(movie_id, title)
+        self._movies[movie_id] = new_movie
+
 
     def add_edge(self, user_id: int, movie_id: int, rating: float) -> None:
-        user = ...
-        movie = ...
-        user[movie] = rating
-        movie[user] = rating
+        """Add a new edge between a user and a movie with the rating given as the weight.
+
+        If the given user_id or movie_id do not correspond to a node in this graph, raise ValueError
+        """
+        if not (user_id in self._users and movie_id in self._movies):
+            raise ValueError
+        
+        user = self._users[user_id]
+        movie = self._movies[movie_id]
+        
+        user.movies[movie] = rating
+        movie.users[user] = rating
 
 def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
     """
