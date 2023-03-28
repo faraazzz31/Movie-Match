@@ -7,6 +7,8 @@ from __future__ import annotations
 import csv
 import pandas
 from typing import Optional
+import tkinter as tk
+from random import sample
 
 #TODO: add pythonta and pytest, and rewrite the docstring and precondition
 #Christoffer: Graph class, RI, recommendations
@@ -146,7 +148,8 @@ def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
     for i in movie_file.index:
         graph.add_movies(int(movie_file["movieId"][i]), str(movie_file["title"][i]))
         movie_title_mapping[str(movie_file["title"][i])] = graph.get_movie(int(movie_file["movieId"][i]))
-        movie_title_name_list.append(str(movie_file["title"][i]))
+        if str(movie_file["title"][i]) not in movie_title_name_list:
+            movie_title_name_list.append(str(movie_file["title"][i]))
 
     for j in user_file.index:
         graph.add_users(int(user_file["userId"][j]))
@@ -204,3 +207,48 @@ def valid(chosen_movies: list[tuple[float, str]], watched_movies: list[str]) -> 
             return False
 
     return True
+
+
+# UI Part
+root = tk.Tk()
+root.title("Movie Match")
+root.geometry("800x800")
+create_graph("ratings.csv", "movies.csv")
+
+
+def listbox_update(movies: list) -> None:
+    list_box.delete(0, tk.END)
+    for movie in movies:
+        list_box.insert(tk.END, movie)
+
+
+def fill_listbox(event) -> None:
+    input_box.delete(0, tk.END)
+    input_box.insert(0, list_box.get(tk.ANCHOR))
+
+
+def search(event) -> None:
+    typed = input_box.get()
+    if typed == '':
+        movies = movie_title_name_list
+    else:
+        movies = []
+        for movie in movie_title_name_list:
+            if typed.lower() in movie.lower():
+                movies.append(movie)
+    listbox_update(movies)
+
+
+input_box = tk.Entry(root, font=("Serif", 15), width=40)
+input_box.pack(pady=50)
+
+list_box = tk.Listbox(root, width=60, height=60)
+list_box.pack(pady=50)
+
+listbox_update(movie_title_name_list)
+
+list_box.bind("<<ListboxSelect>>", fill_listbox)
+
+input_box.bind("<KeyRelease>", search)
+
+root.mainloop()
