@@ -177,9 +177,6 @@ def recommendations(watched_movies: list[str]) -> list[str]:
     3. If there is at least one movie in the movies recommendation that has been watched by the user,
     then take the next 5 most similar movies and return to step 2.
 
-    Should we use graph as the parameter?? and remove the movie_title_mapping dict
-
-
     Preconditions:
     - len(watched_movies) == 3
     """
