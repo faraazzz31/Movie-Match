@@ -10,17 +10,17 @@ from typing import Optional
 import tkinter as tk
 from random import sample
 
-#TODO: add pythonta and pytest, and rewrite the docstring and precondition
-#Christoffer: Graph class, RI, recommendations
-#Faraaz: create_graph, RI, UI
-#Razan: calculate_similarity, arrange_cosine_similarities
+# TODO: add pythonta and pytest, and rewrite the docstring and precondition
+# Christoffer: Graph class, RI, recommendations
+# Faraaz: create_graph, RI, UI
+# Razan: calculate_similarity, arrange_cosine_similarities
 
-movie_title_mapping = {} #mapping of movie title to Movie Vertex
+movie_title_mapping = {}    # mapping of movie title to Movie Vertex
 movie_title_name_list = []
 
+
 class User:
-    """
-    User class where each user acts as a Vertex in the graph.
+    """User class where each user acts as a Vertex in the graph.
 
     Instance Attributes:
     - user_id:
@@ -42,22 +42,21 @@ class User:
 
 
 class Movie:
+    """Movie class where each movie acts as a Vertex in the graph.
+
+    Instance Attributes:
+    - movie_id:
+        The unique id of the user.
+    - users:
+        The mapping of users who have watched the movie where all keys are the users and the corresponding values
+        are the ratings provided by the users.
+    - title:
+        The name of the movie.
+
+    Representation Invariants:
+    - all(0.0 <= self.users[user] <= 5.0 for user in self.users)
+    - all(self in user.movies for user in self.users)
     """
-        Movie class where each movie acts as a Vertex in the graph.
-
-        Instance Attributes:
-        - movie_id:
-            The unique id of the user.
-        - users:
-            The mapping of users who have watched the movie where all keys are the users and the corresponding values
-            are the ratings provided by the users.
-        - title:
-            The name of the movie.
-
-        Representation Invariants:
-        - all(0.0 <= self.users[user] <= 5.0 for user in self.users)
-        - all(self in user.movies for user in self.users)
-        """
     movie_id: int
     users: dict[User, float]
     title: str
@@ -66,6 +65,7 @@ class Movie:
         self.movie_id = movie_id
         self.title = title
         self.users = {}
+
 
 class RatingGraph:
     """
@@ -89,7 +89,6 @@ class RatingGraph:
 
     def add_users(self, user_id: int) -> None:
         """Add a new user with the given id to this graph.
-
         If the user has already been in the graph, do not add the user.
         """
         if user_id in self._users:
@@ -98,10 +97,8 @@ class RatingGraph:
         new_user = User(user_id)
         self._users[user_id] = new_user
 
-
     def add_movies(self, movie_id: int, title: str) -> None:
         """Add a new movie with the given id and title to this graph.
-
         If the movie has already been in the graph, do not add the movie.
         """
         if movie_id in self._movies:
@@ -110,10 +107,8 @@ class RatingGraph:
         new_movie = Movie(movie_id, title)
         self._movies[movie_id] = new_movie
 
-
     def add_edge(self, user_id: int, movie_id: int, rating: float) -> None:
         """Add a new edge between a user and a movie with the rating given as the weight.
-
         If the given user_id or movie_id do not correspond to a node in this graph, raise ValueError
         """
         if not (user_id in self._users and movie_id in self._movies):
@@ -127,11 +122,18 @@ class RatingGraph:
 
     def get_movie(self, movie_id) -> Movie:
         """Based on the movie_id, return the movie node.
-
         Preconditions:
         - movie_id in self._movies
         """
         return self._movies[movie_id]
+
+    def get_all_movies(self) -> list[Movie]:
+        """Returns a list of all movies added to the graph.
+        Preconditions:
+        ...
+        """
+        return list(self._movies.values())
+
 
 def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
     """
@@ -157,29 +159,56 @@ def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
 
     return graph
 
-def compute_cosine_similarity(movie1: Movie, movie2: Movie, graph: RatingGraph) -> Optional[float]:
-    """return None if only 1 or 0 user watched movie1 and movie2"""
-    ...
 
-def arrange_cosine_similarities(movie: Movie, graph: RatingGraph) -> list[tuple[float, str]]:
+def compute_cosine_similarity(movie1: Movie, movie2: Movie, graph: RatingGraph) -> Optional[float]:
+    """Returns the cosine similarity value between two movies.
+    Returns None if only 1 or 0 user watched movie1 and movie2, or if the two movies are the same.
+
+    Preconditions:
+    - movie1.users != {} and movie2.users != {}
+    """
+    if movie1 is movie2:
+        return None
+
+    ratings1, ratings2 = [], []
+    for user in movie1.users:
+        if user in movie2:
+            ratings1.append(movie1.users[user])
+            ratings2.append(movie2.users[user])
+
+    if len(ratings1) < 2:
+        return None
+    else:
+        dot_product = sum([ratings1[i] * ratings2[i] for i in range(0, len(ratings1))])
+        norm1 = sum([ratings1[i] ** 2 for i in range(0, len(ratings1))]) ** 0.5
+        norm2 = sum([ratings2[i] ** 2 for i in range(0, len(ratings2))]) ** 0.5
+        return dot_product / (norm1 * norm2)
+
+
+def arrange_cosine_similarities(movie1: Movie, graph: RatingGraph) -> list[tuple[float, str]]:
     """
     Using the movie and the graph, return list of tuple in the form (cosine similarity, movie title)
     Arrange all the cosine similarities.
-
     If cosine similarity is none do not add to the tuple.
     """
-    ...
+    res = []
+    movie_list = graph.get_all_movies()
+    for movie2 in movie_list:
+        cosine_similarity = compute_cosine_similarity(movie1, movie2)
+        if cosine_similarity is not None:
+            res.append((cosine_similarity, movie2.title))
+    res.sort(key=lambda x: x[0])
+    return res
+
 
 def recommendations(watched_movies: list[str]) -> list[str]:
     """Give five movies recommendation based on the given three watched_movies using cosine similarity.
-
     Based on the pre-computed cosine similarity, the recommender system will recommend movies according these following
     steps:
     1. For each watched_movies take the 5 most similar movies.
     2. Choose 5 random movies from the pool of similar movies.
     3. If there is at least one movie in the movies recommendation that has been watched by the user,
     then take the next 5 most similar movies and return to step 2.
-
     Preconditions:
     - len(watched_movies) == 3
     """
@@ -199,6 +228,7 @@ def recommendations(watched_movies: list[str]) -> list[str]:
 
         i += 5
 
+
 def valid(chosen_movies: list[tuple[float, str]], watched_movies: list[str]) -> bool:
     """Return false if at least one of chosen_movies has been watched by the user"""
 
@@ -217,17 +247,23 @@ create_graph("ratings.csv", "movies.csv")
 
 
 def listbox_update(movies: list) -> None:
+    """TODO: add docstring
+    """
     list_box.delete(0, tk.END)
     for movie in movies:
         list_box.insert(tk.END, movie)
 
 
 def fill_listbox(event) -> None:
+    """TODO: add docstring
+    """
     input_box.delete(0, tk.END)
     input_box.insert(0, list_box.get(tk.ANCHOR))
 
 
 def search(event) -> None:
+    """TODO: add docstring
+    """
     typed = input_box.get()
     if typed == '':
         movies = movie_title_name_list
