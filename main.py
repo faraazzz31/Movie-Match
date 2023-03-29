@@ -160,7 +160,7 @@ def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
     return graph
 
 
-def compute_cosine_similarity(movie1: Movie, movie2: Movie, graph: RatingGraph) -> Optional[float]:
+def compute_cosine_similarity(movie1: Movie, movie2: Movie) -> Optional[float]:
     """Returns the cosine similarity value between two movies.
     Returns None if only 1 or 0 user watched movie1 and movie2, or if the two movies are the same.
 
@@ -172,7 +172,7 @@ def compute_cosine_similarity(movie1: Movie, movie2: Movie, graph: RatingGraph) 
 
     ratings1, ratings2 = [], []
     for user in movie1.users:
-        if user in movie2:
+        if user in movie2.users:
             ratings1.append(movie1.users[user])
             ratings2.append(movie2.users[user])
 
