@@ -244,47 +244,142 @@ root = tk.Tk()
 root.title("Movie Match")
 root.geometry("800x800")
 create_graph("ratings.csv", "movies.csv")
+root.configure(bg="#AEC2B9")
+widget = 0
+
+
+def on_select(event):
+    """Store which widget is being selected in the widget variable"""
+
+    global widget
+    widget = event.widget.extra
 
 
 def listbox_update(movies: list) -> None:
-    """TODO: add docstring
-    """
+    """Update the listbox with the list of movies"""
+
     list_box.delete(0, tk.END)
     for movie in movies:
         list_box.insert(tk.END, movie)
 
 
 def fill_listbox(event) -> None:
-    """TODO: add docstring
-    """
-    input_box.delete(0, tk.END)
-    input_box.insert(0, list_box.get(tk.ANCHOR))
+    """Fill the entry box with the movie selected from the list box"""
+
+    if widget == "entry1":
+        input_box1.delete(0, tk.END)
+        input_box1.insert(0, list_box.get(tk.ANCHOR))
+
+    elif widget == "entry2":
+        input_box2.delete(0, tk.END)
+        input_box2.insert(0, list_box.get(tk.ANCHOR))
+
+    elif widget == "entry3":
+        input_box3.delete(0, tk.END)
+        input_box3.insert(0, list_box.get(tk.ANCHOR))
 
 
 def search(event) -> None:
-    """TODO: add docstring
+    """Show predicted search outcomes in the list box.
+    If the entry box is empty, reset the list box to all the movies.
     """
-    typed = input_box.get()
-    if typed == '':
-        movies = movie_title_name_list
-    else:
-        movies = []
-        for movie in movie_title_name_list:
-            if typed.lower() in movie.lower():
-                movies.append(movie)
-    listbox_update(movies)
+
+    if widget == "entry1":
+        typed = input_box1.get()
+        if typed == '':
+            movies = movie_title_name_list
+        else:
+            movies = []
+            for movie in movie_title_name_list:
+                if typed.lower() in movie.lower():
+                    movies.append(movie)
+        listbox_update(movies)
+
+    elif widget == "entry2":
+        typed = input_box2.get()
+        if typed == '':
+            movies = movie_title_name_list
+        else:
+            movies = []
+            for movie in movie_title_name_list:
+                if typed.lower() in movie.lower():
+                    movies.append(movie)
+        listbox_update(movies)
+
+    elif widget == "entry3":
+        typed = input_box3.get()
+        if typed == '':
+            movies = movie_title_name_list
+        else:
+            movies = []
+            for movie in movie_title_name_list:
+                if typed.lower() in movie.lower():
+                    movies.append(movie)
+        listbox_update(movies)
 
 
-input_box = tk.Entry(root, font=("Serif", 15), width=40)
-input_box.pack(pady=50)
+def submit():
+    """Collect the user input of the movies"""
 
-list_box = tk.Listbox(root, width=60, height=60)
-list_box.pack(pady=50)
+    first = input_box1.get()
+    second = input_box2.get()
+    third = input_box3.get()
+    movie_list = [first] + [second] + [third]
+    print(movie_list)
+    movie_rec = recommendations(movie_list)
+    movie_text.configure(state="normal")
+    for x in movie_rec:
+        movie_text.insert(tk.END, x + '\n')
+    movie_text.configure(state="disabled")
+
+
+def delete_text():
+    movie_text.configure(state="normal")
+    movie_text.delete(1.0, tk.END)
+    movie_text.configure(state="disabled")
+
+
+header = tk.Label(root, text="Movie Match", font=("Marker Felt", 45), bg="#AEC2B9")
+header.pack(pady=5)
+
+instructions = tk.Label(root, text="Please Enter Three Movies That You Have Enjoyed Watching", font=("PT Sans", 15), bg="#AEC2B9")
+instructions.pack(pady=5)
+
+input_box1 = tk.Entry(root, font=("PT Sans", 15), width=40, bg="#F2F8F3")
+input_box1.extra = "entry1"
+input_box1.pack(pady=12)
+
+input_box2 = tk.Entry(root, font=("PT Sans", 15), width=40, bg="#F2F8F3")
+input_box2.extra = "entry2"
+input_box2.pack(pady=12)
+
+input_box3 = tk.Entry(root, font=("PT Sans", 15), width=40, bg="#F2F8F3")
+input_box3.extra = "entry3"
+input_box3.pack(pady=12)
+
+list_box = tk.Listbox(root, width=60, height=10, font=("PT Sans", 15), bg="#F2F8F3")
+list_box.extra = "box"
+list_box.pack(pady=20)
+
+button = tk.Button(root, text="Get Recommendations!", command=submit, bg="#F2F8F3")
+button.pack()
+
+movie_text = tk.Text(root, height=15)
+movie_text.pack(pady=10)
+
+delete = tk.Button(root, text='Delete', command=delete_text)
+delete.pack(pady=10)
 
 listbox_update(movie_title_name_list)
 
 list_box.bind("<<ListboxSelect>>", fill_listbox)
 
-input_box.bind("<KeyRelease>", search)
+input_box1.bind("<KeyRelease>", search)
+input_box2.bind("<KeyRelease>", search)
+input_box3.bind("<KeyRelease>", search)
+
+input_box1.bind("<FocusIn>", on_select)
+input_box2.bind("<FocusIn>", on_select)
+input_box3.bind("<FocusIn>", on_select)
 
 root.mainloop()
