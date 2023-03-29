@@ -319,7 +319,7 @@ def search(event) -> None:
 
 
 def submit():
-    """Collect the user input of the movies"""
+    """Collect the user input of the movies and show the recommendations"""
 
     first = input_box1.get()
     second = input_box2.get()
@@ -334,40 +334,42 @@ def submit():
 
 
 def delete_text():
+    """Delete the text from the text box"""
+    
     movie_text.configure(state="normal")
     movie_text.delete(1.0, tk.END)
     movie_text.configure(state="disabled")
 
 
-header = tk.Label(root, text="Movie Match", font=("Marker Felt", 45), bg="#AEC2B9")
+header = tk.Label(root, text="Movie Match", font=("Marker Felt", 45), bg="#AEC2B9", fg="black")
 header.pack(pady=5)
 
-instructions = tk.Label(root, text="Please Enter Three Movies That You Have Enjoyed Watching", font=("PT Sans", 15), bg="#AEC2B9")
+instructions = tk.Label(root, text="Please Enter Three Movies That You Have Enjoyed Watching", font=("PT Sans", 15), bg="#AEC2B9", fg="black")
 instructions.pack(pady=5)
 
-input_box1 = tk.Entry(root, font=("PT Sans", 15), width=40, bg="#F2F8F3")
+input_box1 = tk.Entry(root, font=("PT Sans", 15), width=40, bg="#F2F8F3", fg="black")
 input_box1.extra = "entry1"
 input_box1.pack(pady=12)
 
-input_box2 = tk.Entry(root, font=("PT Sans", 15), width=40, bg="#F2F8F3")
+input_box2 = tk.Entry(root, font=("PT Sans", 15), width=40, bg="#F2F8F3", fg="black")
 input_box2.extra = "entry2"
 input_box2.pack(pady=12)
 
-input_box3 = tk.Entry(root, font=("PT Sans", 15), width=40, bg="#F2F8F3")
+input_box3 = tk.Entry(root, font=("PT Sans", 15), width=40, bg="#F2F8F3", fg="black")
 input_box3.extra = "entry3"
 input_box3.pack(pady=12)
 
-list_box = tk.Listbox(root, width=60, height=10, font=("PT Sans", 15), bg="#F2F8F3")
+list_box = tk.Listbox(root, width=60, height=10, font=("PT Sans", 15), bg="#F2F8F3", fg="black")
 list_box.extra = "box"
 list_box.pack(pady=20)
 
-button = tk.Button(root, text="Get Recommendations!", command=submit, bg="#F2F8F3")
+button = tk.Button(root, text="Get Recommendations!", command=submit, bg="#F2F8F3", fg="black")
 button.pack()
 
-movie_text = tk.Text(root, height=15)
+movie_text = tk.Text(root, height=15, bg="#F2F8F3", fg="black")
 movie_text.pack(pady=10)
 
-delete = tk.Button(root, text='Delete', command=delete_text)
+delete = tk.Button(root, text='Delete', command=delete_text, bg="#F2F8F3", fg="black")
 delete.pack(pady=10)
 
 listbox_update(movie_title_name_list)
