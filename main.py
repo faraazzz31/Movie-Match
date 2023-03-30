@@ -187,16 +187,18 @@ def compute_cosine_similarity(movie1: Movie, movie2: Movie) -> Optional[float]:
         return dot_product / (norm1 * norm2)
 
 
-def arrange_cosine_similarities(movie1: Movie, graph: RatingGraph) -> list[tuple[float, str]]:
+def arrange_cosine_similarities(movie1: Movie, graph: RatingGraph, compare_genre: bool) -> list[tuple[float, str]]:
     """
     Using the movie and the graph, return list of tuple in the form (cosine similarity, movie title)
     Arrange all the cosine similarities.
     If cosine similarity is none do not add to the tuple.
+    Pass in a bool variable `compare_genre`. If `compare_genre` is True, then we compare only with movies with similar genre.
+    If `compare_genre` is False, then we don't compare the genres.
     """
     res = []
     movie_list = graph.get_all_movies()
     for movie2 in movie_list:
-        if movie1.genre != movie2.genre:
+        if compare_genre and movie1.genre != movie2.genre:
             continue
         
         cosine_similarity = compute_cosine_similarity(movie1, movie2)
