@@ -255,9 +255,11 @@ def recommendations(watched_movies: list[str]) -> list[str]:
 
         i = 0
         while i < len(recommended_movies):
-            if not ((recommended_movies[i][1] in similar_movies) or (recommended_movies[i][1] in watched_movies)):
+            j = 0
+            if j < 5 and \
+                    not ((recommended_movies[i][1] in similar_movies) or (recommended_movies[i][1] in watched_movies)):
                 similar_movies.append(recommended_movies[i][1])
-                break
+                j += 1
 
             i += 1
 
@@ -269,13 +271,14 @@ def recommendations(watched_movies: list[str]) -> list[str]:
 
             i = 0
             while i < len(recommended_movies):
-                if not ((recommended_movies[i][1] in similar_movies) or (recommended_movies[i][1] in watched_movies)):
+                if j < 5 and \
+                        not ((recommended_movies[i][1] in similar_movies) or (recommended_movies[i][1] in watched_movies)):
                     similar_movies.append(recommended_movies[i][1])
                     break
 
                 i += 1
 
-    return similar_movies
+    return sample(similar_movies, 5)
 
 def valid(chosen_movies: list[tuple[float, str]], watched_movies: list[str]) -> bool:
     """Return false if at least one of chosen_movies has been watched by the user"""
