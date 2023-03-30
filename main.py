@@ -99,14 +99,14 @@ class RatingGraph:
         new_user = User(user_id)
         self._users[user_id] = new_user
 
-    def add_movies(self, movie_id: int, title: str) -> None:
+    def add_movies(self, movie_id: int, title: str, genre: str) -> None:
         """Add a new movie with the given id and title to this graph.
         If the movie has already been in the graph, do not add the movie.
         """
         if movie_id in self._movies:
             return
 
-        new_movie = Movie(movie_id, title)
+        new_movie = Movie(movie_id, title, genre)
         self._movies[movie_id] = new_movie
 
     def add_edge(self, user_id: int, movie_id: int, rating: float) -> None:
