@@ -212,8 +212,8 @@ def recommendations(watched_movies: list[str]) -> list[str]:
     Based on the pre-computed cosine similarity, the recommender system will recommend movies according these following
     steps:
     1. For each watched_movies take the most similar movies.
-    2. First, we take genre and cosine similaritioes into account on how we recommend the movies. 
-    3. Then, if the movies recommendation is not enough, we do not take genre into account and only 
+    2. First, we take genre and cosine similaritioes into account on how we recommend the movies.
+    3. Then, if the movies recommendation is not enough, we do not take genre into account and only
     compare the cosine similarities.
     4. If there is at least one movie in the movies recommendation that has been watched by the user,
     then return to the step 2, however we take the next similar movies.
@@ -229,14 +229,14 @@ def recommendations(watched_movies: list[str]) -> list[str]:
     while True:
         for watched_movie in watched_movies:
             watched_movie_node = movie_title_mapping[watched_movie]
-            similar_movies.extend((arrange_cosine_similarities(watched_movie_node, graph, True))[i:i+1])
-        
+            similar_movies.extend((arrange_cosine_similarities(watched_movie_node, graph, True))[i:i + 1])
+
         if len(similar_movies) < 3:
             similar_movies = []
             for watched_movie in watched_movies:
                 watched_movie_node = movie_title_mapping[watched_movie]
                 similar_movies.extend((arrange_cosine_similarities(watched_movie_node, graph, False))[i:i + 1])
-        
+
         if valid(similar_movies, watched_movies):
             return [movie[1] for movie in similar_movies]
 
