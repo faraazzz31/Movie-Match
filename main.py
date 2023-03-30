@@ -106,7 +106,7 @@ class RatingGraph:
         self._users[user_id] = new_user
 
     def add_movies(self, movie_id: int, title: str, genre: str) -> None:
-        """Add a new movie with the given id and title to this graph.
+        """Add a new movie with the given id, title and genre to this graph.
         If the movie has already been in the graph, do not add the movie.
         """
         if movie_id in self._movies:
