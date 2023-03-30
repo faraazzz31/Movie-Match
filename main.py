@@ -222,9 +222,8 @@ def recommendations(watched_movies: list[str]) -> list[str]:
             watched_movie_node = movie_title_mapping[watched_movie]
             similar_movies.extend((arrange_cosine_similarities(watched_movie_node, graph))[i:i+1])
 
-        chosen_movies = sample(similar_movies, 5)
-        if valid(chosen_movies, watched_movies):
-            return [movie[1] for movie in chosen_movies]
+        if valid(similar_movies, watched_movies):
+            return [movie[1] for movie in similar_movies]
 
         i += 1
 
