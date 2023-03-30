@@ -205,10 +205,10 @@ def recommendations(watched_movies: list[str]) -> list[str]:
     """Give five movies recommendation based on the given three watched_movies using cosine similarity.
     Based on the pre-computed cosine similarity, the recommender system will recommend movies according these following
     steps:
-    1. For each watched_movies take the 5 most similar movies.
-    2. Choose 5 random movies from the pool of similar movies.
-    3. If there is at least one movie in the movies recommendation that has been watched by the user,
-    then take the next 5 most similar movies and return to step 2.
+    1. For each watched_movies take the most similar movies.
+    2. If there is at least one movie in the movies recommendation that has been watched by the user,
+    then take the next most similar movies for each watched_movies
+    3. Else we return that three similar movies.
     Preconditions:
     - len(watched_movies) == 3
     """
@@ -220,13 +220,13 @@ def recommendations(watched_movies: list[str]) -> list[str]:
     while True:
         for watched_movie in watched_movies:
             watched_movie_node = movie_title_mapping[watched_movie]
-            similar_movies.extend((arrange_cosine_similarities(watched_movie_node, graph))[i:(i + 5)])
+            similar_movies.extend((arrange_cosine_similarities(watched_movie_node, graph))[i:i+1])
 
         chosen_movies = sample(similar_movies, 5)
         if valid(chosen_movies, watched_movies):
             return [movie[1] for movie in chosen_movies]
 
-        i += 5
+        i += 1
 
 
 def valid(chosen_movies: list[tuple[float, str]], watched_movies: list[str]) -> bool:
