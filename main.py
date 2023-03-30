@@ -257,6 +257,7 @@ def recommendations(watched_movies: list[str]) -> list[str]:
         while i < len(recommended_movies):
             if not ((recommended_movies[i][1] in similar_movies) or (recommended_movies[i][1] in watched_movies)):
                 similar_movies.append(recommended_movies[i][1])
+                break
 
             i += 1
 
@@ -268,9 +269,9 @@ def recommendations(watched_movies: list[str]) -> list[str]:
 
             i = 0
             while i < len(recommended_movies):
-                if not ((recommended_movies[i][1] in similar_movies) or (
-                    recommended_movies[i][1] in watched_movies)):
+                if not ((recommended_movies[i][1] in similar_movies) or (recommended_movies[i][1] in watched_movies)):
                     similar_movies.append(recommended_movies[i][1])
+                    break
 
                 i += 1
 
