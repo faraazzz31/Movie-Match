@@ -137,6 +137,30 @@ class RatingGraph:
         return list(self._movies.values())
 
 
+def find_genre(genres: str) -> str:
+    mov_genre = genres
+    if "|" in genres:
+        x = genres.split("|")
+        if "Children" in x:
+            mov_genre = "Children"
+        elif "Animation" in x:
+            mov_genre = "Animation"
+        elif "Fantasy" in x:
+            mov_genre = "Fantasy"
+        elif "Horror" in x:
+            mov_genre = "Horror"
+        elif "Thriller" in x:
+            mov_genre = "Thriller"
+        elif "Romance" in x:
+            mov_genre = "Romance"
+        elif "War" in x:
+            mov_genre = "War"
+        else:
+            mov_genre = x[0]
+
+    return mov_genre
+
+
 def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
     """
     1. We add all the movies to the graph (movies node)
@@ -150,7 +174,7 @@ def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
     user_file = pandas.read_csv(csv_file_user)
 
     for i in movie_file.index:
-        graph.add_movies(int(movie_file["movieId"][i]), str(movie_file["title"][i]))
+        graph.add_movies(int(movie_file["movieId"][i]), str(movie_file["title"][i]), find_genre(str(movie_file["genres"][i])))
         movie_title_mapping[str(movie_file["title"][i])] = graph.get_movie(int(movie_file["movieId"][i]))
         if str(movie_file["title"][i]) not in movie_title_name_list:
             movie_title_name_list.append(str(movie_file["title"][i]))
