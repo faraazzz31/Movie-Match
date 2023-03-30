@@ -271,12 +271,15 @@ def recommendations(watched_movies: list[str]) -> list[str]:
 
             i = 0
             while i < len(recommended_movies):
+                j = 0
                 if j < 5 and \
-                        not ((recommended_movies[i][1] in similar_movies) or (recommended_movies[i][1] in watched_movies)):
+                        not ((recommended_movies[i][1] in similar_movies) or (
+                                recommended_movies[i][1] in watched_movies)):
                     similar_movies.append(recommended_movies[i][1])
-                    break
+                    j += 1
 
                 i += 1
+
 
     return sample(similar_movies, 5)
 
