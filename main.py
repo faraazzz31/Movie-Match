@@ -249,34 +249,32 @@ def recommendations(watched_movies: list[str]) -> list[str]:
 
     similar_movies = []
 
-    while True:
-        for watched_movie in watched_movies:
-            watched_movie_node = movie_title_mapping[watched_movie]
-            recommended_movies = arrange_cosine_similarities(watched_movie_node, graph, True)
+    for watched_movie in watched_movies:
+        watched_movie_node = movie_title_mapping[watched_movie]
+        recommended_movies = arrange_cosine_similarities(watched_movie_node, graph, True)
 
-            i = 0
-            while i < len(recommended_movies):
-                if not ((recommended_movies[i][1] in similar_movies) or (recommended_movies[i][1] in watched_movies)):
-                    similar_movies.append(recommended_movies[i][1])
+        i = 0
+        while i < len(recommended_movies):
+            if not ((recommended_movies[i][1] in similar_movies) or (recommended_movies[i][1] in watched_movies)):
+                similar_movies.append(recommended_movies[i][1])
 
             i += 1
 
 
-        if len(similar_movies) < 3:
-            for watched_movie in watched_movies:
-                watched_movie_node = movie_title_mapping[watched_movie]
-                recommended_movies = arrange_cosine_similarities(watched_movie_node, graph, False)
+    if len(similar_movies) < 3:
+        for watched_movie in watched_movies:
+            watched_movie_node = movie_title_mapping[watched_movie]
+            recommended_movies = arrange_cosine_similarities(watched_movie_node, graph, False)
 
-                i = 0
-                while i < len(recommended_movies):
-                    if not ((recommended_movies[i][1] in similar_movies) or (
-                            recommended_movies[i][1] in watched_movies)):
-                        similar_movies.append(recommended_movies[i][1])
+            i = 0
+            while i < len(recommended_movies):
+                if not ((recommended_movies[i][1] in similar_movies) or (
+                    recommended_movies[i][1] in watched_movies)):
+                    similar_movies.append(recommended_movies[i][1])
 
                 i += 1
 
-        return similar_movies
-
+    return similar_movies
 
 def valid(chosen_movies: list[tuple[float, str]], watched_movies: list[str]) -> bool:
     """Return false if at least one of chosen_movies has been watched by the user"""
