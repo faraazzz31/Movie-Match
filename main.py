@@ -43,7 +43,6 @@ class User:
 
 class Movie:
     """Movie class where each movie acts as a Vertex in the graph.
-
     Instance Attributes:
     - movie_id:
         The unique id of the user.
@@ -52,7 +51,8 @@ class Movie:
         are the ratings provided by the users.
     - title:
         The name of the movie.
-
+    - genre:
+        The genre of the movie
     Representation Invariants:
     - all(0.0 <= self.users[user] <= 5.0 for user in self.users)
     - all(self in user.movies for user in self.users)
@@ -60,11 +60,13 @@ class Movie:
     movie_id: int
     users: dict[User, float]
     title: str
+    genre: str
 
-    def __init__(self, movie_id: int, title: str):
+    def __init__(self, movie_id: int, title: str, genre: str):
         self.movie_id = movie_id
         self.title = title
         self.users = {}
+        self.genre = genre
 
 
 class RatingGraph:
