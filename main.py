@@ -237,17 +237,17 @@ def arrange_cosine_similarities(movie1: Movie, graph: RatingGraph, compare_genre
     res.sort(key=lambda x: x[0])
     return res
 
-
 def recommendations(watched_movies: list[str]) -> list[str]:
     """Give five movies recommendation based on the given three watched_movies using cosine similarity.
     Based on the genre of the movie and cosine similarity, the recommender system will recommend movies according these
     following steps:
-    1. For each watched_movies, take the 5 most similar movies based on gender and cosine similarities.
-    2. However, the recommended movies should not be watched by the user and do not contain duplicated movies.
-    3.If we do not have enough movies to recommend, for each watched_movies, take the 5 most similar movies ONLY
-    based on cosine similarities.
-    4. The recommended movies also should not be watched by the user and do not contain duplicated movies.
-    5. Then, take 5 movies randomly from the pool of the movies recommendations.
+    1. For every movie that a random user likes, the system will select the top five movies that are most similar.
+    These movies should have the same genre and the highest cosine similarity with the movie that the user likes.
+    2. If the system does not have enough movies to recommend, it will select the top five most similar movies based
+    ONLY on cosine similarity for each watched movie.
+    3. Nevertheless, the recommended movies should not have been watched by the user, and they should not contain any duplicates.
+    4. Then, from the pool of the recommended movies, the system will take five movies randomly.
+
 
     Preconditions:
     - len(watched_movies) == 3
@@ -288,7 +288,6 @@ def recommendations(watched_movies: list[str]) -> list[str]:
                 i += 1
 
     return sample(similar_movies, 5)
-
 
 root = tk.Tk()
 root.title("Movie Match")
