@@ -196,6 +196,9 @@ def arrange_cosine_similarities(movie1: Movie, graph: RatingGraph) -> list[tuple
     res = []
     movie_list = graph.get_all_movies()
     for movie2 in movie_list:
+        if movie1.genre != movie2.genre:
+            continue
+        
         cosine_similarity = compute_cosine_similarity(movie1, movie2)
         if cosine_similarity is not None:
             res.append((cosine_similarity, movie2.title))
