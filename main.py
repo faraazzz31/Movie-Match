@@ -240,15 +240,15 @@ def arrange_cosine_similarities(movie1: Movie, graph: RatingGraph, compare_genre
 
 def recommendations(watched_movies: list[str]) -> list[str]:
     """Give five movies recommendation based on the given three watched_movies using cosine similarity.
-    Based on the pre-computed cosine similarity, the recommender system will recommend movies according these following
-    steps:
-    1. For each watched_movies take the most similar movies.
-    2. First, we take genre and cosine similaritioes into account on how we recommend the movies.
-    3. Then, if the movies recommendation is not enough, we do not take genre into account and only
-    compare the cosine similarities.
-    4. If there is at least one movie in the movies recommendation that has been watched by the user,
-    then return to the step 2, however we take the next similar movies.
-    5. Else we return that three similar movies.
+    Based on the genre of the movie and cosine similarity, the recommender system will recommend movies according these
+    following steps:
+    1. For each watched_movies, take the 5 most similar movies based on gender and cosine similarities.
+    2. However, the recommended movies should not be watched by the user and do not contain duplicated movies.
+    3.If we do not have enough movies to recommend, for each watched_movies, take the 5 most similar movies ONLY
+    based on cosine similarities.
+    4. The recommended movies also should not be watched by the user and do not contain duplicated movies.
+    5. Then, take 5 movies randomly from the pool of the movies recommendations.
+
     Preconditions:
     - len(watched_movies) == 3
     """
@@ -271,7 +271,7 @@ def recommendations(watched_movies: list[str]) -> list[str]:
 
             i += 1
 
-    if len(similar_movies) < 3:
+    if len(similar_movies) < 5:
         for watched_movie in watched_movies:
             watched_movie_node = movie_title_mapping[watched_movie]
             recommended_movies = arrange_cosine_similarities(watched_movie_node, graph, False)
