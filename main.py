@@ -11,9 +11,6 @@ import tkinter as tk
 from random import sample
 
 # TODO: add pythonta and pytest, and rewrite the docstring and precondition
-# Christoffer: Graph class, RI, recommendations
-# Faraaz: create_graph, RI, UI
-# Razan: calculate_similarity, arrange_cosine_similarities
 
 movie_title_mapping = {}  # mapping of movie title to Movie Vertex
 movie_title_name_list = []
@@ -145,6 +142,7 @@ class RatingGraph:
 
 
 def find_genre(genres: str) -> str:
+    """return the main genre of the movie"""
     mov_genre = genres
     if "|" in genres:
         x = genres.split("|")
@@ -170,18 +168,16 @@ def find_genre(genres: str) -> str:
 
 def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
     """
-    1. We add all the movies to the graph (movies node)
-    2. Access the users dataset
-    3. If the user is not in the graph -> we add the users (user_id)
-    4. Add the edge(user_id, movie_id, rating)
-    5. update movie_title_mapping = {} #mapping of movie title to Movie Vertex
+    Add all the Movie and User Vertices to the graph and add all the edges between them based on the ratings.
+    Also update movie_title_mapping and movie_title_name_list.
     """
     graph = RatingGraph()
     movie_file = pandas.read_csv(csv_file_movie)
     user_file = pandas.read_csv(csv_file_user)
 
     for i in movie_file.index:
-        graph.add_movies(int(movie_file["movieId"][i]), str(movie_file["title"][i]), find_genre(str(movie_file["genres"][i])))
+        graph.add_movies(int(movie_file["movieId"][i]), str(movie_file["title"][i]),
+                         find_genre(str(movie_file["genres"][i])))
         movie_title_mapping[str(movie_file["title"][i])] = graph.get_movie(int(movie_file["movieId"][i]))
         if str(movie_file["title"][i]) not in movie_title_name_list:
             movie_title_name_list.append(str(movie_file["title"][i]))
@@ -222,7 +218,8 @@ def arrange_cosine_similarities(movie1: Movie, graph: RatingGraph, compare_genre
     Using the movie and the graph, return list of tuple in the form (cosine similarity, movie title)
     Arrange all the cosine similarities.
     If cosine similarity is none do not add to the tuple.
-    Pass in a bool variable `compare_genre`. If `compare_genre` is True, then we compare only with movies with similar genre.
+    Pass in a bool variable `compare_genre`. If `compare_genre` is True, then we compare only with movies with similar
+    genre.
     If `compare_genre` is False, then we don't compare the genres.
     """
     res = []
@@ -237,6 +234,7 @@ def arrange_cosine_similarities(movie1: Movie, graph: RatingGraph, compare_genre
     res.sort(key=lambda x: x[0])
     return res
 
+
 def recommendations(watched_movies: list[str]) -> list[str]:
     """Give five movies recommendation based on the given three watched_movies using cosine similarity.
     Based on the genre of the movie and cosine similarity, the recommender system will recommend movies according these
@@ -247,13 +245,11 @@ def recommendations(watched_movies: list[str]) -> list[str]:
     ONLY on cosine similarity for each watched movie.
     3. Nevertheless, the recommended movies should not have been watched by the user, and they should not contain any duplicates.
     4. Then, from the pool of the recommended movies, the system will take five movies randomly.
-
-
     Preconditions:
     - len(watched_movies) == 3
     """
 
-    graph = create_graph("ratings.csv", "movies.csv")
+    graph = create_graph("datasets/ratings.csv", "datasets/movies.csv")
 
     similar_movies = []
 
@@ -271,7 +267,7 @@ def recommendations(watched_movies: list[str]) -> list[str]:
 
             i += 1
 
-    if len(similar_movies) < 5:
+    if len(similar_movies) < 3:
         for watched_movie in watched_movies:
             watched_movie_node = movie_title_mapping[watched_movie]
             recommended_movies = arrange_cosine_similarities(watched_movie_node, graph, False)
@@ -289,10 +285,11 @@ def recommendations(watched_movies: list[str]) -> list[str]:
 
     return sample(similar_movies, 5)
 
+
 root = tk.Tk()
 root.title("Movie Match")
-root.geometry("800x800")
-create_graph("ratings.csv", "movies.csv")
+root.geometry("1000x1000")
+create_graph("datasets/ratings.csv", "datasets/movies.csv")
 root.configure(bg="#AEC2B9")
 widget = 0
 
@@ -304,7 +301,7 @@ def on_select(event):
     widget = event.widget.extra
 
 
-def listbox_update(movies: list) -> None:
+def listbox_update(movies: list):
     """Update the listbox with the list of movies"""
 
     list_box.delete(0, tk.END)
@@ -312,7 +309,7 @@ def listbox_update(movies: list) -> None:
         list_box.insert(tk.END, movie)
 
 
-def fill_listbox(event) -> None:
+def fill_listbox(event):
     """Fill the entry box with the movie selected from the list box"""
 
     if widget == "entry1":
@@ -328,41 +325,41 @@ def fill_listbox(event) -> None:
         input_box3.insert(0, list_box.get(tk.ANCHOR))
 
 
-def search(event) -> None:
+def search(event):
     """Show predicted search outcomes in the list box.
     If the entry box is empty, reset the list box to all the movies.
     """
 
     if widget == "entry1":
-        typed = input_box1.get()
-        if typed == '':
+        entered = input_box1.get()
+        if entered == '':
             movies = movie_title_name_list
         else:
             movies = []
             for movie in movie_title_name_list:
-                if typed.lower() in movie.lower():
+                if entered.lower() in movie.lower():
                     movies.append(movie)
         listbox_update(movies)
 
     elif widget == "entry2":
-        typed = input_box2.get()
-        if typed == '':
+        entered = input_box2.get()
+        if entered == '':
             movies = movie_title_name_list
         else:
             movies = []
             for movie in movie_title_name_list:
-                if typed.lower() in movie.lower():
+                if entered.lower() in movie.lower():
                     movies.append(movie)
         listbox_update(movies)
 
     elif widget == "entry3":
-        typed = input_box3.get()
-        if typed == '':
+        entered = input_box3.get()
+        if entered == '':
             movies = movie_title_name_list
         else:
             movies = []
             for movie in movie_title_name_list:
-                if typed.lower() in movie.lower():
+                if entered.lower() in movie.lower():
                     movies.append(movie)
         listbox_update(movies)
 
@@ -374,15 +371,19 @@ def submit():
     second = input_box2.get()
     third = input_box3.get()
     movie_list = [first] + [second] + [third]
-    print(movie_list)
-    movie_rec = recommendations(movie_list)
-    movie_text.configure(state="normal")
-    for x in movie_rec:
-        movie_text.insert(tk.END, x + '\n')
-    movie_text.configure(state="disabled")
+    if '' in movie_list:
+        lb = tk.Label(root, text="Please Enter Three Movies", font=("PT Sans", 15), bg="#AEC2B9", fg="red")
+        lb.pack()
+    else:
+        movie_rec = recommendations(movie_list)
+        movie_text.configure(state="normal")
+        for x in movie_rec:
+            movie_text.insert(tk.END, x + '\n')
+        movie_text.configure(state="disabled")
 
 
 def delete_text():
+    """Remove all teh text inside the recommendation text box"""
     movie_text.configure(state="normal")
     movie_text.delete(1.0, tk.END)
     movie_text.configure(state="disabled")
@@ -391,8 +392,14 @@ def delete_text():
 header = tk.Label(root, text="Movie Match", font=("Marker Felt", 45), bg="#AEC2B9", fg="black")
 header.pack(pady=5)
 
-instructions = tk.Label(root, text="Please Enter Three Movies That You Have Enjoyed Watching", font=("PT Sans", 15), bg="#AEC2B9", fg="black")
+instructions = tk.Label(root, text="Please Enter Three Movies That You Have Enjoyed Watching", font=("PT Sans", 15),
+                        bg="#AEC2B9", fg="black")
 instructions.pack(pady=5)
+
+instructions2 = tk.Label(root,
+                         text="Start by typing the movie in the entry box then selecting it from the list box below",
+                         font=("PT Sans", 15), bg="#AEC2B9", fg="black")
+instructions2.pack()
 
 input_box1 = tk.Entry(root, font=("PT Sans", 15), width=40, bg="#F2F8F3", fg="black")
 input_box1.extra = "entry1"
@@ -404,11 +411,11 @@ input_box2.pack(pady=12)
 
 input_box3 = tk.Entry(root, font=("PT Sans", 15), width=40, bg="#F2F8F3", fg="black")
 input_box3.extra = "entry3"
-input_box3.pack(pady=12)
+input_box3.pack(pady=10)
 
-list_box = tk.Listbox(root, width=60, height=10, font=("PT Sans", 15), bg="#F2F8F3", fg="black")
+list_box = tk.Listbox(root, width=60, height=6, font=("PT Sans", 15), bg="#F2F8F3", fg="black")
 list_box.extra = "box"
-list_box.pack(pady=20)
+list_box.pack(pady=12)
 
 button = tk.Button(root, text="Get Recommendations!", command=submit, bg="#F2F8F3", fg="black")
 button.pack()
