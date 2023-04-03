@@ -1,5 +1,5 @@
-"""
-CSC11 Course Project: Movie Match (Movie Recommendation System)
+"""CSC11 Course Project: Movie Match (Movie Recommendation System)
+
 Authors: Christoffer Tan, Faraaz Ahmed, Razan Rifandi
 """
 
@@ -10,23 +10,24 @@ from typing import Optional
 import tkinter as tk
 from random import sample
 
-# TODO: add pythonta and pytest, and rewrite the docstring and precondition
+from python_ta.contracts import check_contracts
+
+# TODO: Rewrite the docstring and precondition
 
 movie_title_mapping = {}  # mapping of movie title to Movie Vertex
 movie_title_name_list = []
 
 
+@check_contracts
 class User:
     """
     User class where each user acts as a Vertex in the graph.
-
     Instance Attributes:
     - user_id:
         The unique id of the user.
     - movies:
         The mapping of movies the user has watched where all keys are the movies and the corresponding values are
         the ratings.
-
     Representation Invariants:
     - all(0.0 <= self.movies[movie] <= 5.0 for movie in self.movies)
     - all(self in movie.users for movie in self.movies)
@@ -34,15 +35,15 @@ class User:
     user_id: int
     movies: dict[Movie, float]
 
-    def __init__(self, user_id: int):
+    def __init__(self, user_id: int) -> None:
         self.user_id = user_id
         self.movies = {}
 
 
+@check_contracts
 class Movie:
     """
         Movie class where each movie acts as a Vertex in the graph.
-
         Instance Attributes:
         - movie_id:
             The unique id of the user.
@@ -51,7 +52,6 @@ class Movie:
             are the ratings provided by the users.
         - title:
             The name of the movie.
-
         Representation Invariants:
         - all(0.0 <= self.users[user] <= 5.0 for user in self.users)
         - all(self in user.movies for user in self.users)
@@ -61,38 +61,36 @@ class Movie:
     title: str
     genre: str
 
-    def __init__(self, movie_id: int, title: str, genre: str):
+    def __init__(self, movie_id: int, title: str, genre: str) -> None:
         self.movie_id = movie_id
         self.title = title
         self.users = {}
         self.genre = genre
 
 
+@check_contracts
 class RatingGraph:
     """
     A class for a recommender system that acts like a graph where users are linked to movies with
     edges having the rating.
-
     Private Instance Attributes:
         -_users:
             A mapping of users where the keys are the user_id and the values are the corresponding User Vertex.
         -_movies:
             A mapping of movies where the keys are the movie_id and the values are the corresponding Movie Vertex.
-
     Representation Invariants:
     ...
     """
     _users: dict[int, User]
     _movies: dict[int, Movie]
 
-    def __init__(self):
+    def __init__(self) -> None:
         """initialize an empty RatingGraph"""
         self._users = {}
         self._movies = {}
 
     def add_users(self, user_id: int) -> None:
         """Add a new user with the given id to this graph.
-
         If the user has already been in the graph, do not add the user.
         """
 
@@ -114,7 +112,6 @@ class RatingGraph:
 
     def add_edge(self, user_id: int, movie_id: int, rating: float) -> None:
         """Add a new edge between a user and a movie with the rating given as the weight.
-
         If the given user_id or movie_id do not correspond to a node in this graph, raise ValueError
         """
         if not (user_id in self._users and movie_id in self._movies):
@@ -126,7 +123,7 @@ class RatingGraph:
         user.movies[movie] = rating
         movie.users[user] = rating
 
-    def get_movie(self, movie_id) -> Movie:
+    def get_movie(self, movie_id: int) -> Movie:
         """Based on the movie_id, return the movie node.
         Preconditions:
         - movie_id in self._movies
@@ -141,6 +138,7 @@ class RatingGraph:
         return list(self._movies.values())
 
 
+@check_contracts
 def find_genre(genres: str) -> str:
     """return the main genre of the movie"""
     mov_genre = genres
@@ -166,6 +164,7 @@ def find_genre(genres: str) -> str:
     return mov_genre
 
 
+@check_contracts
 def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
     """
     Add all the Movie and User Vertices to the graph and add all the edges between them based on the ratings.
@@ -189,6 +188,7 @@ def create_graph(csv_file_user: csv, csv_file_movie: csv) -> RatingGraph:
     return graph
 
 
+@check_contracts
 def compute_cosine_similarity(movie1: Movie, movie2: Movie) -> Optional[float]:
     """Returns the cosine similarity value between two movies.
     Returns None if only 1 or 0 user watched movie1 and movie2, or if the two movies are the same.
@@ -208,11 +208,12 @@ def compute_cosine_similarity(movie1: Movie, movie2: Movie) -> Optional[float]:
         return None
     else:
         dot_product = sum([ratings1[i] * ratings2[i] for i in range(0, len(ratings1))])
-        norm1 = sum([ratings1[i] ** 2 for i in range(0, len(ratings1))]) ** 0.5
-        norm2 = sum([ratings2[i] ** 2 for i in range(0, len(ratings2))]) ** 0.5
+        norm1 = sum([rating ** 2 for rating in ratings1]) ** 0.5
+        norm2 = sum([rating ** 2 for rating in ratings2]) ** 0.5
         return dot_product / (norm1 * norm2)
 
 
+@check_contracts
 def arrange_cosine_similarities(movie1: Movie, graph: RatingGraph, compare_genre: bool) -> list[tuple[float, str]]:
     """
     Using the movie and the graph, return list of tuple in the form (cosine similarity, movie title)
@@ -235,6 +236,7 @@ def arrange_cosine_similarities(movie1: Movie, graph: RatingGraph, compare_genre
     return res
 
 
+@check_contracts
 def recommendations(watched_movies: list[str]) -> list[str]:
     """Give five movies recommendation based on the given three watched_movies using cosine similarity.
     Based on the genre of the movie and cosine similarity, the recommender system will recommend movies according these
@@ -243,7 +245,8 @@ def recommendations(watched_movies: list[str]) -> list[str]:
     These movies should have the same genre and the highest cosine similarity with the movie that the user likes.
     2. If the system does not have enough movies to recommend, it will select the top five most similar movies based
     ONLY on cosine similarity for each watched movie.
-    3. Nevertheless, the recommended movies should not have been watched by the user, and they should not contain any duplicates.
+    3. Nevertheless, the recommended movies should not have been watched by the user, and they should not contain any
+    duplicates.
     4. Then, from the pool of the recommended movies, the system will take five movies randomly.
     Preconditions:
     - len(watched_movies) == 3
@@ -274,11 +277,11 @@ def recommendations(watched_movies: list[str]) -> list[str]:
 
             i = 0
             while i < len(recommended_movies):
+                movie = recommended_movies[i][1]
                 j = 0
-                if j < 5 and \
-                        not ((recommended_movies[i][1] in similar_movies) or (
-                                recommended_movies[i][1] in watched_movies)):
-                    similar_movies.append(recommended_movies[i][1])
+
+                if j < 5 and not ((movie in similar_movies) or (movie in watched_movies)):
+                    similar_movies.append(movie)
                     j += 1
 
                 i += 1
@@ -383,7 +386,7 @@ def submit():
 
 
 def delete_text():
-    """Remove all teh text inside the recommendation text box"""
+    """Remove all the text inside the recommendation text box"""
     movie_text.configure(state="normal")
     movie_text.delete(1.0, tk.END)
     movie_text.configure(state="disabled")
@@ -439,3 +442,13 @@ input_box2.bind("<FocusIn>", on_select)
 input_box3.bind("<FocusIn>", on_select)
 
 root.mainloop()
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod(verbose=True)
+
+    import python_ta
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'extra-imports': ['csv', 'pandas', 'tkinter', 'random'],
+    })
