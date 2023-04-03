@@ -10,8 +10,6 @@ from typing import Optional
 import tkinter as tk
 from random import sample
 
-# TODO: add pythonta and pytest, and rewrite the docstring and precondition
-
 movie_title_mapping = {}  # mapping of movie title to Movie Vertex
 movie_title_name_list = []
 
@@ -34,7 +32,7 @@ class User:
     user_id: int
     movies: dict[Movie, float]
 
-    def __init__(self, user_id: int):
+    def __init__(self, user_id: int) -> None:
         self.user_id = user_id
         self.movies = {}
 
@@ -61,7 +59,7 @@ class Movie:
     title: str
     genre: str
 
-    def __init__(self, movie_id: int, title: str, genre: str):
+    def __init__(self, movie_id: int, title: str, genre: str) -> None:
         self.movie_id = movie_id
         self.title = title
         self.users = {}
@@ -78,14 +76,11 @@ class RatingGraph:
             A mapping of users where the keys are the user_id and the values are the corresponding User Vertex.
         -_movies:
             A mapping of movies where the keys are the movie_id and the values are the corresponding Movie Vertex.
-
-    Representation Invariants:
-    ...
     """
     _users: dict[int, User]
     _movies: dict[int, Movie]
 
-    def __init__(self):
+    def __init__(self) -> None:
         """initialize an empty RatingGraph"""
         self._users = {}
         self._movies = {}
@@ -135,8 +130,6 @@ class RatingGraph:
 
     def get_all_movies(self) -> list[Movie]:
         """Returns a list of all movies added to the graph.
-        Preconditions:
-        ...
         """
         return list(self._movies.values())
 
@@ -243,7 +236,8 @@ def recommendations(watched_movies: list[str]) -> list[str]:
     These movies should have the same genre and the highest cosine similarity with the movie that the user likes.
     2. If the system does not have enough movies to recommend, it will select the top five most similar movies based
     ONLY on cosine similarity for each watched movie.
-    3. Nevertheless, the recommended movies should not have been watched by the user, and they should not contain any duplicates.
+    3. Nevertheless, the recommended movies should not have been watched by the user, and they should not contain any
+    duplicates.
     4. Then, from the pool of the recommended movies, the system will take five movies randomly.
     Preconditions:
     - len(watched_movies) == 3
@@ -383,7 +377,7 @@ def submit():
 
 
 def delete_text():
-    """Remove all teh text inside the recommendation text box"""
+    """Remove all the text inside the recommendation text box"""
     movie_text.configure(state="normal")
     movie_text.delete(1.0, tk.END)
     movie_text.configure(state="disabled")
@@ -439,3 +433,4 @@ input_box2.bind("<FocusIn>", on_select)
 input_box3.bind("<FocusIn>", on_select)
 
 root.mainloop()
+
